@@ -31,3 +31,7 @@ cd super_data
 ```sh
 python3 -m pip install -r requirements.txt
 ```
+4. Run
+```sh
+python3 sd.py
+```
