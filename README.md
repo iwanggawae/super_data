@@ -19,11 +19,15 @@ Follow me:
 ## Installation
 
 #### Terminal/Termux
-Repository
+1. Repository
 ```sh
 git clone https://github.com/iwanggawae/super_data
 ```
-Requirements Installation
+2. Open Directory
+```sh
+cd super_data
+```
+3. Requirements Installation
 ```sh
 python3 -m pip install -r requirements.txt
 ```
