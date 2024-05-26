@@ -8,6 +8,7 @@ _Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jum
 - Custom number of questions
 - Custom number of participants
 - (NEW) Auto data summary
+- (NEW) Auto Reliability test result (Cronbach's Alpha)
 - Automatically export data to Excel
 
 ## **Requirements:**
@@ -16,6 +17,7 @@ _Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jum
 - termcolor
 - tqdm
 - openpyxl
+- pingouin
 
 ## Installation
 
