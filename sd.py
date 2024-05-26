@@ -3,6 +3,7 @@ import pandas as pd
 from termcolor import colored
 import time
 from tqdm import tqdm
+import pingouin as pg
 
 # Simulasi loading
 for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
@@ -76,9 +77,17 @@ summary_data = {
 summary_df = pd.DataFrame(summary_data).T
 summary_df.index.name = 'Statistics'
 
+# Menghitung Cronbach's Alpha
+reliability_data = df.iloc[:, 1:]  # Data pertanyaan saja, tanpa kolom 'Participant'
+cronbach_alpha = pg.cronbach_alpha(reliability_data)
+
+# Menambahkan hasil uji reliabilitas ke summary
+reliability_summary = pd.DataFrame({'Cronbach\'s Alpha': [cronbach_alpha[0]], 'N of Items': [num_questions]})
+
 # Export ke Excel
 with pd.ExcelWriter('hasil_kuesioner.xlsx') as writer:
     df.to_excel(writer, sheet_name='Data', index=False)
     summary_df.to_excel(writer, sheet_name='Summary')
+    reliability_summary.to_excel(writer, sheet_name='Reliability')
 
 print("Data telah berhasil diekspor ke hasil_kuesioner.xlsx")
