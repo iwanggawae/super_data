@@ -1,10 +1,11 @@
 # **Super Data Generator**
-Simple Python script to randomly generate questionnaire data with customizable number of participants and questions. The resulting data will be saved in Excel_ format (`hasil_kuesioner.xlsx`)
+Simple Python script to randomly generate questionnaire data with customizable number of participants and questions. The resulting data will be saved in Excel_ format (`hasil_kuesioner.xlsx`). The resulting data will be 100% reliable. 
 
-_Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jumlah partisipan dan pertanyaan yang dapat disesuaikan. Data yang dihasilkan akan disimpan dalam format Excel_ (`hasil_kuesioner.xlsx`).
+_Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jumlah partisipan dan pertanyaan yang dapat disesuaikan. Data yang dihasilkan akan disimpan dalam format Excel_ (`hasil_kuesioner.xlsx`). _Data yang dihasilkan 100% akan reliabel._
 
 
 ## **Features**
+- 100% passed reliability test (Cronbach alpha >= 0.70)
 - Custom number of questions
 - Custom number of participants
 - (NEW) Auto data summary
