@@ -3,7 +3,7 @@ import pandas as pd
 from termcolor import colored
 import time
 from tqdm import tqdm
-import pingouin as pg  # Pastikan untuk menginstall library ini menggunakan `pip install pingouin`
+import pingouin as pg
 
 # Simulasi loading
 for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
