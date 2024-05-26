@@ -64,10 +64,12 @@ def generate_data(num_participants, num_questions):
 
 # Loop untuk memastikan reliabilitas di atas 0.60
 cronbach_alpha_value = 0
-while cronbach_alpha_value <= 0.60:
-    print(colored("Data belum Reliabel, akan mengenerate ulang...", 'green', attrs=['bold']))
+while cronbach_alpha_value <= 0.70:
+    print(colored("Data belum Reliabel, akan mengenerate ulang...", 'red', attrs=['bold']))
     df = generate_data(num_participants, num_questions)
-
+while cronbach_alpha_value >= 0.70:
+    print(colored("SELAMAT, DATA SUDAH RELIABEL!", 'green', attrs=['bold']))
+    
     # Menghitung Cronbach's Alpha
     reliability_data = df.iloc[:, 1:]  # Data pertanyaan saja, tanpa kolom 'Participant'
     cronbach_alpha = pg.cronbach_alpha(reliability_data)
