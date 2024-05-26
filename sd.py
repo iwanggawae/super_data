@@ -9,7 +9,7 @@ for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
 
 print("We Are Ready.")
 print("-" * 40)
-print(colored("SUPER DATA", 'red', attrs=['bold']))
+print(colored("SUPER DATA", 'green', attrs=['bold']))
 print("BY @iwanggawae V1")
 print("-" * 40)
 
@@ -17,7 +17,7 @@ try:
     num_participants = int(input("Masukkan jumlah partisipan: "))
     num_questions = int(input("Masukkan jumlah pertanyaan: "))
 except ValueError:
-    print("Input tidak valid. Masukkan angka.")
+    print(colored("!!!MASUKKAN ANGKA!!!", 'red', attrs=['bold']))
     sys.exit(1)
 
 # Animasi Loading
