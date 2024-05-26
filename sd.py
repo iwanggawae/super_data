@@ -67,9 +67,7 @@ cronbach_alpha_value = 0
 while cronbach_alpha_value <= 0.70:
     print(colored("Data belum Reliabel, akan mengenerate ulang...", 'red', attrs=['bold']))
     df = generate_data(num_participants, num_questions)
-while cronbach_alpha_value >= 0.70:
-    print(colored("SELAMAT, DATA SUDAH RELIABEL!", 'green', attrs=['bold']))
-    
+
     # Menghitung Cronbach's Alpha
     reliability_data = df.iloc[:, 1:]  # Data pertanyaan saja, tanpa kolom 'Participant'
     cronbach_alpha = pg.cronbach_alpha(reliability_data)
@@ -96,4 +94,5 @@ with pd.ExcelWriter('hasil_kuesioner.xlsx') as writer:
     summary_df.to_excel(writer, sheet_name='Summary')
     reliability_summary.to_excel(writer, sheet_name='Reliability')
 
+print(colored("Data SUDAH RELIABEL!", 'green', attrs=['bold']))
 print("Data telah berhasil diekspor ke hasil_kuesioner.xlsx")
