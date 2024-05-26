@@ -36,8 +36,8 @@ proporsi_ratings = {
     1: 0.009,
     2: 0.015,
     3: 0.287,
-    4: 0.391,
-    5: 0.298
+    4: 0.345,
+    5: 0.344
 }
 
 # Hitung max_ratings secara dinamis
