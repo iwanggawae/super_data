@@ -2,3 +2,4 @@ pandas
 termcolor
 tqdm
 openpyxl
+pingouin
