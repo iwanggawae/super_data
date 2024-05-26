@@ -4,8 +4,9 @@ from termcolor import colored
 import time
 from tqdm import tqdm
 
+# Simulasi loading
 for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
-    time.sleep(0.05)  # Simulasi proses, 0.02 detik per iterasi (total 2 detik)
+    time.sleep(0.05)
 
 print("We Are Ready.")
 print("-" * 40)
@@ -22,7 +23,7 @@ except ValueError:
 
 # Animasi Loading
 for i in tqdm(range(100), desc="Preparing Data...", ascii=False, ncols=75):
-    time.sleep(0.03)  # Simulasi proses, 0.02 detik per iterasi (total 2 detik)
+    time.sleep(0.03)
 
 for i in tqdm(range(100), desc="Getting Panda Ready...", ascii=False, ncols=75):
     time.sleep(0.02)
@@ -46,7 +47,6 @@ max_ratings = {
 
 # Pastikan total max_ratings sesuai dengan total rating yang dibutuhkan
 while sum(max_ratings.values()) != total_ratings:
-    # Jika tidak sesuai, sesuaikan rating dengan frekuensi terbanyak
     most_frequent_rating = max(max_ratings, key=max_ratings.get)
     max_ratings[most_frequent_rating] += 1
 
@@ -66,8 +66,19 @@ for participant in range(1, num_participants + 1):
 columns = ['Participant'] + [f'Q{i+1}' for i in range(num_questions)]
 df = pd.DataFrame(data, columns=columns)
 
+# Menghitung jumlah dan rata-rata untuk setiap pertanyaan
+summary_data = {
+    'Total': df.iloc[:, 1:].sum(),
+    'Average': df.iloc[:, 1:].mean()
+}
+
+# Menggabungkan hasil ke DataFrame summary
+summary_df = pd.DataFrame(summary_data).T
+summary_df.index.name = 'Statistics'
+
 # Export ke Excel
 with pd.ExcelWriter('hasil_kuesioner.xlsx') as writer:
     df.to_excel(writer, sheet_name='Data', index=False)
+    summary_df.to_excel(writer, sheet_name='Summary')
 
 print("Data telah berhasil diekspor ke hasil_kuesioner.xlsx")
