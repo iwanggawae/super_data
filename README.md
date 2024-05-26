@@ -7,6 +7,7 @@ _Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jum
 ## **Features**
 - Custom number of questions
 - Custom number of participants
+- (NEW) Auto data summary
 - Automatically export data to Excel
 
 ## **Requirements:**
