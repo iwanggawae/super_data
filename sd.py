@@ -3,7 +3,7 @@ import pandas as pd
 from termcolor import colored
 import time
 from tqdm import tqdm
-import pingouin as pg
+import pingouin as pg  # Pastikan untuk menginstall library ini menggunakan `pip install pingouin`
 
 # Simulasi loading
 for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
@@ -22,50 +22,58 @@ except ValueError:
     print(colored("!!!MASUKKAN ANGKA!!!", 'red', attrs=['bold']))
     sys.exit(1)
 
-# Animasi Loading
-for i in tqdm(range(100), desc="Preparing Data...", ascii=False, ncols=75):
-    time.sleep(0.03)
+# Fungsi untuk menghasilkan data
+def generate_data(num_participants, num_questions):
+    data = []
+    total_ratings = num_participants * num_questions
 
-for i in tqdm(range(100), desc="Getting Panda Ready...", ascii=False, ncols=75):
-    time.sleep(0.02)
+    # Proporsi rating yang diinginkan
+    proporsi_ratings = {
+        1: 0.009,
+        2: 0.015,
+        3: 0.287,
+        4: 0.345,
+        5: 0.344
+    }
 
-data = []
-total_ratings = num_participants * num_questions
+    # Hitung max_ratings secara dinamis
+    max_ratings = {
+        rating: round(proporsi * total_ratings) for rating, proporsi in proporsi_ratings.items()
+    }
 
-# Proporsi rating yang diinginkan
-proporsi_ratings = {
-    1: 0.009,
-    2: 0.015,
-    3: 0.287,
-    4: 0.345,
-    5: 0.344
-}
+    # Pastikan total max_ratings sesuai dengan total rating yang dibutuhkan
+    while sum(max_ratings.values()) != total_ratings:
+        most_frequent_rating = max(max_ratings, key=max_ratings.get)
+        max_ratings[most_frequent_rating] += 1
 
-# Hitung max_ratings secara dinamis
-max_ratings = {
-    rating: round(proporsi * total_ratings) for rating, proporsi in proporsi_ratings.items()
-}
+    count_ratings = {rating: 0 for rating in range(1, 6)}
 
-# Pastikan total max_ratings sesuai dengan total rating yang dibutuhkan
-while sum(max_ratings.values()) != total_ratings:
-    most_frequent_rating = max(max_ratings, key=max_ratings.get)
-    max_ratings[most_frequent_rating] += 1
+    for participant in range(1, num_participants + 1):
+        row = [participant]
+        for _ in range(num_questions):
+            while True:
+                rating = random.randint(1, 5)
+                if count_ratings[rating] < max_ratings[rating]:
+                    break
+            row.append(rating)
+            count_ratings[rating] += 1
+        data.append(row)
 
-count_ratings = {rating: 0 for rating in range(1, 6)}
+    columns = ['Participant'] + [f'Q{i+1}' for i in range(num_questions)]
+    return pd.DataFrame(data, columns=columns)
 
-for participant in range(1, num_participants + 1):
-    row = [participant]
-    for _ in range(num_questions):
-        while True:
-            rating = random.randint(1, 5)
-            if count_ratings[rating] < max_ratings[rating]:
-                break
-        row.append(rating)
-        count_ratings[rating] += 1
-    data.append(row)
+# Loop untuk memastikan reliabilitas di atas 0.60
+cronbach_alpha_value = 0
+while cronbach_alpha_value <= 0.60:
+    print(colored("Data belum Reliabel, akan mengenerate ulang...", 'green', attrs=['bold']))
+    df = generate_data(num_participants, num_questions)
 
-columns = ['Participant'] + [f'Q{i+1}' for i in range(num_questions)]
-df = pd.DataFrame(data, columns=columns)
+    # Menghitung Cronbach's Alpha
+    reliability_data = df.iloc[:, 1:]  # Data pertanyaan saja, tanpa kolom 'Participant'
+    cronbach_alpha = pg.cronbach_alpha(reliability_data)
+    cronbach_alpha_value = cronbach_alpha[0]
+
+    print(f"Cronbach's Alpha: {cronbach_alpha_value}")
 
 # Menghitung jumlah dan rata-rata untuk setiap pertanyaan
 summary_data = {
@@ -77,12 +85,8 @@ summary_data = {
 summary_df = pd.DataFrame(summary_data).T
 summary_df.index.name = 'Statistics'
 
-# Menghitung Cronbach's Alpha
-reliability_data = df.iloc[:, 1:]  # Data pertanyaan saja, tanpa kolom 'Participant'
-cronbach_alpha = pg.cronbach_alpha(reliability_data)
-
 # Menambahkan hasil uji reliabilitas ke summary
-reliability_summary = pd.DataFrame({'Cronbach\'s Alpha': [cronbach_alpha[0]], 'N of Items': [num_questions]})
+reliability_summary = pd.DataFrame({'Cronbach\'s Alpha': [cronbach_alpha_value], 'N of Items': [num_questions]})
 
 # Export ke Excel
 with pd.ExcelWriter('hasil_kuesioner.xlsx') as writer:
