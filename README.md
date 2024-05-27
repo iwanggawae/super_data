@@ -5,7 +5,7 @@ _Skrip Python sederhana untuk menghasilkan data kuesioner secara acak dengan jum
 
 
 ## **Features**
-- 100% passed reliability test (Cronbach alpha >= 0.70)
+- 100% passed reliability test (Cronbach alpha >= 0.68)
 - Custom number of questions
 - Custom number of participants
 - (NEW) Auto data summary
