@@ -64,7 +64,7 @@ def generate_data(num_participants, num_questions):
 
 # Loop untuk memastikan reliabilitas di atas 0.60
 cronbach_alpha_value = 0
-while cronbach_alpha_value <= 0.70:
+while cronbach_alpha_value <= 0.68:
     print(colored("Data belum Reliabel, akan mengenerate ulang...", 'red', attrs=['bold']))
     df = generate_data(num_participants, num_questions)
 
