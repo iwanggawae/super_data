@@ -31,9 +31,9 @@ def generate_data(num_participants, num_questions):
     proporsi_ratings = {
         1: 0.009,
         2: 0.015,
-        3: 0.287,
-        4: 0.345,
-        5: 0.344
+        3: 0.190,
+        4: 0.320,
+        5: 0.314
     }
 
     # Hitung max_ratings secara dinamis
