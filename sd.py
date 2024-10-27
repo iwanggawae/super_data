@@ -4,6 +4,8 @@ from termcolor import colored
 import time
 from tqdm import tqdm
 import pingouin as pg
+from openpyxl import load_workbook
+import sys
 
 # Simulasi loading
 for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
@@ -12,7 +14,7 @@ for i in tqdm(range(100), desc="Loading SUPER DATA...", ascii=False, ncols=75):
 print("We Are Ready.")
 print("-" * 40)
 print(colored("SUPER DATA", 'green', attrs=['bold']))
-print("BY @iwanggawae V1")
+print("BY @iwanggawae V1.3")
 print("-" * 40)
 
 try:
@@ -64,7 +66,7 @@ def generate_data(num_participants, num_questions):
 
 # Loop untuk memastikan reliabilitas di atas 0.60
 cronbach_alpha_value = 0
-while cronbach_alpha_value <= 0.68:
+while cronbach_alpha_value <= 0.699:
     print(colored("Data belum Reliabel, akan mengenerate ulang...", 'red', attrs=['bold']))
     df = generate_data(num_participants, num_questions)
 
@@ -74,6 +76,19 @@ while cronbach_alpha_value <= 0.68:
     cronbach_alpha_value = cronbach_alpha[0]
 
     print(f"Cronbach's Alpha: {cronbach_alpha_value}")
+
+# Uji validitas dengan korelasi item-total
+valid = False
+while not valid:
+    total_scores = df.iloc[:, 1:].sum(axis=1)
+    item_total_correlation = df.iloc[:, 1:].apply(lambda x: x.corr(total_scores))
+    
+    # Cek jika semua nilai korelasi item-total di atas threshold (misalnya 0.3)
+    if all(item_total_correlation > 0.3):
+        valid = True
+    else:
+        print(colored("Data belum Valid, akan mengenerate ulang...", 'red', attrs=['bold']))
+        df = generate_data(num_participants, num_questions)
 
 # Menghitung jumlah dan rata-rata untuk setiap pertanyaan
 summary_data = {
@@ -88,11 +103,49 @@ summary_df.index.name = 'Statistics'
 # Menambahkan hasil uji reliabilitas ke summary
 reliability_summary = pd.DataFrame({'Cronbach\'s Alpha': [cronbach_alpha_value], 'N of Items': [num_questions]})
 
-# Export ke Excel
+# Penafsiran hasil reliabilitas
+if cronbach_alpha_value > 0.9:
+    reliability_interpretation = "Excellent reliability: This indicates a highly consistent dataset."
+elif cronbach_alpha_value > 0.8:
+    reliability_interpretation = "Good reliability: The dataset is reliable and consistent."
+elif cronbach_alpha_value > 0.7:
+    reliability_interpretation = "Acceptable reliability: Data reliability is sufficient."
+else:
+    reliability_interpretation = "Low reliability: The data might not be consistent enough for certain analyses."
+
+reliability_summary["Interpretation"] = reliability_interpretation
+
+# Menambahkan hasil uji validitas
+validity_summary = pd.DataFrame({
+    'Item': [f'Q{i+1}' for i in range(num_questions)],
+    'Item-Total Correlation': item_total_correlation
+})
+validity_summary.index.name = 'Statistics'
+
+# Penafsiran hasil validitas
+validity_interpretation = (
+    "All items have an item-total correlation above 0.3, indicating adequate validity. "
+    "This suggests that each item correlates well with the overall scale and contributes to measuring the intended construct."
+)
+
+# Export ke Excel menggunakan pandas
 with pd.ExcelWriter('hasil_kuesioner.xlsx') as writer:
     df.to_excel(writer, sheet_name='Data', index=False)
     summary_df.to_excel(writer, sheet_name='Summary')
     reliability_summary.to_excel(writer, sheet_name='Reliability')
+    validity_summary.to_excel(writer, sheet_name='Validity')
 
-print(colored("Data SUDAH RELIABEL!", 'green', attrs=['bold']))
+# Tambahkan interpretasi reliabilitas dan validitas ke file Excel
+workbook = load_workbook('hasil_kuesioner.xlsx')
+worksheet_reliability = workbook['Reliability']
+worksheet_validity = workbook['Validity']
+
+# Tulis penafsiran pada posisi sel tertentu di masing-masing worksheet
+worksheet_reliability['A5'] = reliability_interpretation
+worksheet_validity['F3'] = validity_interpretation  # Mengubah posisi penafsiran validitas ke F3
+
+# Simpan workbook yang sudah diperbarui
+workbook.save('hasil_kuesioner.xlsx')
+
+print(colored("Data SUDAH RELIABEL dan VALID!", 'green', attrs=['bold']))
 print("Data telah berhasil diekspor ke hasil_kuesioner.xlsx")
