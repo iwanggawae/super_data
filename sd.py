@@ -10,11 +10,11 @@ def cronbach_alpha(data):
     return alpha
 
 # Function to generate correlated Likert-scale data
-def generate_correlated_data(num_respondents, num_questions, target_alpha=0.6):
+def generate_correlated_data(num_respondents, num_questions, target_alpha=0.6, target_mean=4):
     np.random.seed(42)  # Set seed for reproducibility
 
-    # Create a strong correlation matrix
-    base_matrix = np.random.normal(loc=3, scale=0.5, size=(num_respondents, 1))
+    # Shift the base matrix to achieve the desired mean
+    base_matrix = np.random.normal(loc=target_mean, scale=0.5, size=(num_respondents, 1))
     correlated_data = base_matrix + np.random.normal(0, 0.3, size=(num_respondents, num_questions))
     correlated_data = np.clip(np.round(correlated_data), 1, 5)  # Scale to Likert (1-5)
 
@@ -45,21 +45,24 @@ def generate_likert_data():
 
         for i in range(1, num_variables + 1):
             num_questions = int(input(f"Berapa pertanyaan untuk {var}{i}?: "))
-            variable_info[var][f"{var}{i}"] = num_questions
+            mean_target = float(input(f"Berapa rata-rata target untuk {var}{i} (1-5)?: "))
+            variable_info[var][f"{var}{i}"] = (num_questions, mean_target)
 
     num_respondents = int(input("Berapa responden yang mengisi?: "))
 
     all_data = {}
 
     for var, var_details in variable_info.items():
-        for sub_var, num_questions in var_details.items():
-            data, alpha = generate_correlated_data(num_respondents, num_questions, target_alpha=0.6)
+        for sub_var, (num_questions, target_mean) in var_details.items():
+            data, alpha = generate_correlated_data(
+                num_respondents, num_questions, target_alpha=0.6, target_mean=target_mean
+            )
             print(f"Data untuk {sub_var} berhasil dihasilkan dengan Alpha = {alpha:.2f}.")
             all_data[sub_var] = data
 
     # Combine all data into a single DataFrame
     final_data = pd.DataFrame(np.hstack(list(all_data.values())), columns=[
-        f"{var}{q + 1}"
+        f"{var}.{q + 1}"
         for var, sub_data in all_data.items()
         for q in range(sub_data.shape[1])
     ])
